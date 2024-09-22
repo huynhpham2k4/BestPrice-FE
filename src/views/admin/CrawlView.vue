@@ -1,0 +1,238 @@
+<template>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Form to input crawl details -->
+        <div class="col-md-6">
+            <div class="card" style="height: 600px; overflow: hidden;">
+                <div class="card-header">
+                    <h3 class="text-center">Crawl Product Data</h3>
+                </div>
+                <div class="card-body" style="overflow-y: auto;">
+                    <form @submit.prevent="submitCrawlForm">
+                        <div id="accordionExample" class="accordion">
+                            <div v-for="(data, index) in formData" :key="index" class="accordion-item">
+                                <!-- Wrapper for header and remove button -->
+                                <div class="d-flex align-items-center">
+
+                                    <!-- Accordion Header -->
+                                    <h2 class="accordion-header flex-grow-1" :id="'heading' + index">
+                                        <button class="accordion-button" type="button" :data-bs-toggle="'collapse'" :data-bs-target="'#collapse' + index" :aria-expanded="index === 0 ? 'true' : 'false'" :aria-controls="'collapse' + index">
+                                            {{ data.site_name || 'Nhập thông tin cần lấy dữ liệu' }}
+                                        </button>
+                                    </h2>
+                                    <!-- Remove Button -->
+                                    <button type="button" class="btn btn-danger m-2" @click="removeForm(index)">
+                                        Remove
+                                    </button>
+                                </div>
+                                <div :id="'collapse' + index" class="accordion-collapse collapse" :class="{ show: index === 0 }" :aria-labelledby="'heading' + index" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="form-group">
+                                            <label :for="'site_name_' + index">Site Name</label>
+                                            <input type="text" v-model="data.site_name" class="form-control" :id="'site_name_' + index" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'url_' + index">URL</label>
+                                            <input type="text" v-model="data.url" class="form-control" :id="'url_' + index" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'category_' + index">Category</label>
+                                            <select v-model="data.category_id" class="form-control" :id="'category_' + index">
+                                                <option :value="1">Điện thoại</option>
+                                                <option :value="2">Laptop</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'name_selector_' + index">Name Selector</label>
+                                            <input type="text" v-model="data.selectors.name_selector" class="form-control" :id="'name_selector_' + index">
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'price_selector_' + index">Price Selector</label>
+                                            <input type="text" v-model="data.selectors.price_selector" class="form-control" :id="'price_selector_' + index">
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'link_selector_' + index">Link Selector</label>
+                                            <input type="text" v-model="data.selectors.link_selector" class="form-control" :id="'link_selector_' + index">
+                                        </div>
+                                        <div class="form-group">
+                                            <label :for="'image_selector_' + index">Image Selector</label>
+                                            <input type="text" v-model="data.selectors.image_selector" class="form-control" :id="'image_selector_' + index">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-secondary" @click="addForm">
+                                Add Another
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Crawl Data
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Log -->
+        <div class="col-md-6">
+            <div class="card" style="height: 600px; overflow: hidden;">
+                <div class="card-header">
+                    <h3 class="text-center">Crawled Information</h3>
+                </div>
+                <div class="card-body" style="overflow-y: auto;">
+                    <div v-if="statusLog.length">
+                        <pre v-for="(log, index) in statusLog" :key="index">{{ log }}</pre>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-success" @click="saveCrawledData">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    name: 'AdminView',
+    data() {
+        return {
+            formData: [{
+                site_name: '',
+                url: '',
+                category_id: null,
+                selectors: {
+                    name_selector: '',
+                    price_selector: '',
+                    link_selector: '',
+                    image_selector: ''
+                }
+            }],
+            statusLog: []
+        };
+    },
+    methods: {
+        async submitCrawlForm() {
+            try {
+                this.statusLog = []; // Clear previous logs
+                const invalidEntries = this.formData.filter(data => !data.site_name || !data.url || !data.category_id);
+                if (invalidEntries.length) {
+                    this.statusLog.push('Vui lòng điền đầy đủ thông tin cho tất cả các mục.');
+                    return;
+                }
+
+                const requests = this.formData.map(data => {
+                    return this.axios.post('http://localhost:5000/crawl', data)
+                        .then(response => response.data)
+                        .catch(error => ({
+                            error: error.message
+                        }));
+                });
+
+                const results = await Promise.all(requests);
+                this.statusLog = results;
+                console.log('Status Log:', this.statusLog);
+            } catch (error) {
+                console.error('Error:', error);
+                this.statusLog = [{
+                    error: error.message
+                }];
+            }
+        },
+        addForm() {
+            this.formData.push({
+                site_name: '',
+                url: '',
+                category_id: null,
+                selectors: {
+                    name_selector: '',
+                    price_selector: '',
+                    link_selector: '',
+                    image_selector: ''
+                }
+            });
+        },
+        removeForm(index) {
+            this.formData.splice(index, 1);
+        },
+        async saveCrawledData() {
+            try {
+                // Log dữ liệu hiện tại trong statusLog
+                console.log('Current statusLog:', this.statusLog);
+
+                // Giả sử statusLog[0] là mảng chứa sản phẩm
+                const products = this.statusLog[0] || [];
+
+                // Chuẩn bị dữ liệu để gửi
+                const productsToSave = products.map(product => ({
+                    product_name: product.product_name || '', // Lấy đúng tên thuộc tính
+                    product_price: product.product_price || '', // Lấy đúng tên thuộc tính
+                    product_link: product.product_link || '', // Lấy đúng tên thuộc tính
+                    product_image: product.product_image || '' // Lấy đúng tên thuộc tính
+                })).filter(product => product.product_name); // Lọc bỏ sản phẩm không có tên
+
+                // Log dữ liệu trước khi gửi
+                console.log('Sending data to API:', {
+                    products: productsToSave,
+                    category_id: this.formData[0].category_id,
+                    site_name: this.formData[0].site_name
+                });
+
+                // Gửi dữ liệu đến API
+                const response = await this.axios.post('http://localhost:5000/add_products', {
+                    products: productsToSave,
+                    category_id: this.formData[0].category_id,
+                    site_name: this.formData[0].site_name
+                });
+
+                if (response.data.status === 'success') {
+                    this.statusLog.push('Dữ liệu đã được lưu thành công!');
+                } else {
+                    this.statusLog.push('Lưu dữ liệu thất bại. Phản hồi: ' + JSON.stringify(response.data));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.statusLog.push(`Lỗi khi lưu dữ liệu: ${error.message}`);
+            }
+        }
+
+    }
+};
+</script>
+
+<style scoped>
+.container {
+    margin-top: 20px;
+}
+
+.card {
+
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #2596be;
+}
+
+.card-body {
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+}
+
+.pre {
+    white-space: pre-wrap;
+    /* Preserve whitespace and line breaks */
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+    /* Enable scrolling */
+}
+</style>
