@@ -71,30 +71,49 @@
                             </button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
-
-        <!-- Status Log -->
         <div class="col-md-6">
-            <div class="card" style="height: 600px; overflow: hidden;">
+            <div class="card" style="height: 600px; display: flex; flex-direction: column;">
                 <div class="card-header">
                     <h3 class="text-center">Crawled Information</h3>
                 </div>
-                <div class="card-body" style="overflow-y: auto;">
-                    <div v-if="statusLog.length">
-                        <pre v-for="(log, index) in statusLog" :key="index">{{ log }}</pre>
+
+                <div class="card-body" style="flex: 1; overflow-y: auto;">
+                    <div v-if="statusLog[0] && Array.isArray(statusLog[0])">
+                        <div v-for="(product, index) in statusLog[0]" :key="index" class="product-card mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div>
+                                        <label for="product_name">Product Name:</label>
+                                        <input v-model="product.product_name" id="product_name" class="form-control" />
+                                    </div>
+                                    <div>
+                                        <label for="product_price">Product Price:</label>
+                                        <input v-model="product.product_price" id="product_price" class="form-control" />
+                                    </div>
+                                    <div>
+                                        <label for="product_link">Product Link:</label>
+                                        <input v-model="product.product_link" id="product_link" class="form-control" />
+                                    </div>
+                                    <div>
+                                        <label for="product_image">Product Image:</label>
+                                        <input v-model="product.product_image" id="product_image" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="text-center mt-4">
-                    <button type="button" class="btn btn-success" @click="saveCrawledData">
-                        Save
-                    </button>
-                </div>
 
+                <!-- Nút lưu tất cả các sản phẩm ở cuối -->
+                <div class="card-footer" style="position: sticky; bottom: 0; background-color: white;">
+                    <button @click="saveCrawledData" class="btn btn-success w-100">Lưu tất cả sản phẩm</button>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 </template>
@@ -177,13 +196,6 @@ export default {
                     product_link: product.product_link || '', // Lấy đúng tên thuộc tính
                     product_image: product.product_image || '' // Lấy đúng tên thuộc tính
                 })).filter(product => product.product_name); // Lọc bỏ sản phẩm không có tên
-
-                // Log dữ liệu trước khi gửi
-                console.log('Sending data to API:', {
-                    products: productsToSave,
-                    category_id: this.formData[0].category_id,
-                    site_name: this.formData[0].site_name
-                });
 
                 // Gửi dữ liệu đến API
                 const response = await this.axios.post('http://localhost:5000/add_products', {
