@@ -1,11 +1,11 @@
 <template>
 <div class="container mt-4">
-    <div class="row">
+    <div class="column ">
         <!-- Form to input crawl details -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card" style="height: 600px; overflow: hidden;">
-                <div class="card-header">
-                    <h3 class="text-center">Crawl Product Data</h3>
+                <div class="card-header text-white d-flex justify-content-center align-items-center">
+                    <h3 class="mb-0">Crawl dữ liệu</h3>
                 </div>
                 <div class="card-body" style="overflow-y: auto;">
                     <form @submit.prevent="submitCrawlForm">
@@ -16,7 +16,7 @@
 
                                     <!-- Accordion Header -->
                                     <h2 class="accordion-header flex-grow-1" :id="'heading' + index">
-                                        <button class="accordion-button" type="button" :data-bs-toggle="'collapse'" :data-bs-target="'#collapse' + index" :aria-expanded="index === 0 ? 'true' : 'false'" :aria-controls="'collapse' + index">
+                                        <button class="accordion-button" type="button" :data-bs-toggle="'collapse'" :data-bs-target="'#collapse' + index" :aria-expanded='true' :aria-controls="'collapse' + index">
                                             {{ data.site_name || 'Nhập thông tin cần lấy dữ liệu' }}
                                         </button>
                                     </h2>
@@ -25,45 +25,65 @@
                                         Remove
                                     </button>
                                 </div>
-                                <div :id="'collapse' + index" class="accordion-collapse collapse" :class="{ show: index === 0 }" :aria-labelledby="'heading' + index" data-bs-parent="#accordionExample">
+                                <div :id="'collapse' + index" class="accordion-collapse collapse show" :aria-labelledby="'heading' + index">
                                     <div class="accordion-body">
-                                        <div class="form-group">
-                                            <label :for="'site_name_' + index">Site Name</label>
-                                            <input type="text" v-model="data.site_name" class="form-control" :id="'site_name_' + index" required>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label :for="'site_name_' + index">Site Name</label>
+                                                    <input type="text" v-model="data.site_name" class="form-control" :id="'site_name_' + index" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label :for="'url_' + index">URL</label>
+                                                    <input type="text" v-model="data.url" class="form-control" :id="'url_' + index" required>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label :for="'url_' + index">URL</label>
-                                            <input type="text" v-model="data.url" class="form-control" :id="'url_' + index" required>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label :for="'category_' + index">Category</label>
+                                                    <select v-model="data.category_id" class="form-control" :id="'category_' + index">
+                                                        <option :value="1">Điện thoại</option>
+                                                        <option :value="2">Laptop</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label :for="'name_selector_' + index">Name Selector</label>
+                                                    <input type="text" v-model="data.selectors.name_selector" class="form-control" :id="'name_selector_' + index">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label :for="'category_' + index">Category</label>
-                                            <select v-model="data.category_id" class="form-control" :id="'category_' + index">
-                                                <option :value="1">Điện thoại</option>
-                                                <option :value="2">Laptop</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label :for="'name_selector_' + index">Name Selector</label>
-                                            <input type="text" v-model="data.selectors.name_selector" class="form-control" :id="'name_selector_' + index">
-                                        </div>
-                                        <div class="form-group">
-                                            <label :for="'price_selector_' + index">Price Selector</label>
-                                            <input type="text" v-model="data.selectors.price_selector" class="form-control" :id="'price_selector_' + index">
-                                        </div>
-                                        <div class="form-group">
-                                            <label :for="'link_selector_' + index">Link Selector</label>
-                                            <input type="text" v-model="data.selectors.link_selector" class="form-control" :id="'link_selector_' + index">
-                                        </div>
-                                        <div class="form-group">
-                                            <label :for="'image_selector_' + index">Image Selector</label>
-                                            <input type="text" v-model="data.selectors.image_selector" class="form-control" :id="'image_selector_' + index">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label :for="'price_selector_' + index">Price Selector</label>
+                                                    <input type="text" v-model="data.selectors.price_selector" class="form-control" :id="'price_selector_' + index">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label :for="'link_selector_' + index">Link Selector</label>
+                                                    <input type="text" v-model="data.selectors.link_selector" class="form-control" :id="'link_selector_' + index">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label :for="'image_selector_' + index">Image Selector</label>
+                                                    <input type="text" v-model="data.selectors.image_selector" class="form-control" :id="'image_selector_' + index">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="text-center mt-4">
-                            <button type="button" class="btn btn-secondary" @click="addForm">
+                            <button type="button" class="btn btn-secondary me-3" @click="addForm">
                                 Add Another
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -71,45 +91,82 @@
                             </button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-12 ">
+            <div v-if="crawlStatus === 'loading'">Đang lấy dữ liệu...</div>
+            <div v-if="crawlStatus === 'success'">Thành công!</div>
+            <div v-if="crawlStatus === 'error'">Lấy dữ liệu thất bại!</div>
+        </div>
+        <div class="col-md-12">
             <div class="card" style="height: 600px; display: flex; flex-direction: column;">
-                <div class="card-header">
-                    <h3 class="text-center">Crawled Information</h3>
+                <div class="card-header  text-white d-flex justify-content-center align-items-center">
+                    <h3 class="mb-0">Thông tin sản phẩm lấy dữ liệu được</h3>
                 </div>
-
                 <div class="card-body" style="flex: 1; overflow-y: auto;">
-                    <div v-if="statusLog[0] && Array.isArray(statusLog[0])">
-                        <div v-for="(product, index) in statusLog[0]" :key="index" class="product-card mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div>
-                                        <label for="product_name">Product Name:</label>
-                                        <input v-model="product.product_name" id="product_name" class="form-control" />
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%">Tên sản phẩm</th>
+                                <th style="width: 20%">Link sản phẩm</th>
+                                <th style="width: 15%">Giá sản phẩm</th>
+                                <th style="width: 15%">Hình ảnh</th>
+                                <th style="width: 10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(product, index) in statusLog[0]" :key="index">
+                                <!-- Tên sản phẩm -->
+                                <td>
+                                    <div v-if="!product.isEditing">
+                                        {{ product.product_name }}
                                     </div>
-                                    <div>
-                                        <label for="product_price">Product Price:</label>
-                                        <input v-model="product.product_price" id="product_price" class="form-control" />
+                                    <input v-if="product.isEditing" v-model="product.product_name" class="form-control  text-black border-0" />
+                                </td>
+
+                                <!-- Link sản phẩm với chế độ xem và chỉnh sửa -->
+                                <td class="text-truncate" style="max-width: 200px;">
+                                    <div v-if="!product.isEditing">
+                                        <a :href="product.product_link" target="_blank">link sản phẩm</a>
                                     </div>
-                                    <div>
-                                        <label for="product_link">Product Link:</label>
-                                        <input v-model="product.product_link" id="product_link" class="form-control" />
+                                    <div v-else>
+                                        <input v-model="product.product_link" class="form-control" />
                                     </div>
-                                    <div>
-                                        <label for="product_image">Product Image:</label>
-                                        <input v-model="product.product_image" id="product_image" class="form-control" />
+                                </td>
+
+                                <!-- Giá sản phẩm -->
+                                <td>{{ product.product_price }}</td>
+
+                                <!-- Hình ảnh sản phẩm -->
+                                <td>
+                                    <div v-if="!product.isEditing">
+                                        <img :src="product.product_image" alt="Product Image" style="width: 50px;" />
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                    <div v-else>
+                                        <input v-model="product.product_image" class="form-control" />
+                                    </div>
+                                </td>
+
+                                <!-- Nút hành động chỉnh sửa và xóa -->
+                                <td>
+                                    <button class="btn btn-primary btn-sm" @click="product.isEditing = !product.isEditing">
+                                        <i class="fas fa-edit" v-if="!product.isEditing"></i>
+                                        <i class="fas fa-save" v-else></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" @click="deleteProduct(product)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Nút lưu tất cả các sản phẩm ở cuối -->
-                <div class="card-footer" style="position: sticky; bottom: 0; background-color: white;">
-                    <button @click="saveCrawledData" class="btn btn-success w-100">Lưu tất cả sản phẩm</button>
+                <div class="card-footer d-flex justify-content-center" style="position: sticky; bottom: 0; background-color: white;">
+                    <button @click="saveCrawledData" class="btn btn-success w-20">Lưu tất cả sản phẩm</button>
                 </div>
             </div>
         </div>
@@ -120,7 +177,7 @@
 
 <script>
 export default {
-    name: 'AdminView',
+    name: 'CrawlView',
     data() {
         return {
             formData: [{
@@ -134,7 +191,8 @@ export default {
                     image_selector: ''
                 }
             }],
-            statusLog: []
+            statusLog: [],
+            crawlStatus: ''
         };
     },
     methods: {
@@ -146,7 +204,7 @@ export default {
                     this.statusLog.push('Vui lòng điền đầy đủ thông tin cho tất cả các mục.');
                     return;
                 }
-
+                this.crawlStatus = 'loading'
                 const requests = this.formData.map(data => {
                     return this.axios.post('http://localhost:5000/crawl', data)
                         .then(response => response.data)
@@ -157,8 +215,10 @@ export default {
 
                 const results = await Promise.all(requests);
                 this.statusLog = results;
+                this.crawlStatus = 'success';
                 console.log('Status Log:', this.statusLog);
             } catch (error) {
+                this.crawlStatus = 'error'
                 console.error('Error:', error);
                 this.statusLog = [{
                     error: error.message
@@ -213,7 +273,13 @@ export default {
                 console.error('Error:', error);
                 this.statusLog.push(`Lỗi khi lưu dữ liệu: ${error.message}`);
             }
-        }
+        },
+        toggleEdit(index) {
+            this.statusLog[0][index].isEditing = !this.statusLog[0][index].isEditing;
+        },
+        deleteProduct(index) {
+            this.statusLog[0].splice(index, 1); // Xóa sản phẩm khỏi danh sách
+        },
 
     }
 };
@@ -231,6 +297,7 @@ export default {
 
 .card-header {
     background-color: #2596be;
+    padding: 5px;
 }
 
 .card-body {

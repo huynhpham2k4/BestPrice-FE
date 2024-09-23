@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/user/HomeView.vue";
-import AdminView from "../views/admin/CrawlView.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
+import CrawlView from "../views/admin/CrawlView.vue";
 
 const routes = [
   {
@@ -15,7 +15,7 @@ const routes = [
     children: [
       {
         path: "crawl", // Đường dẫn '/admin/crawl'
-        component: AdminView, // File AdminView.vue
+        component: CrawlView, // File AdminView.vue
         name: "adminCrawl",
       },
       // Thêm các route con khác của admin tại đây nếu cần
