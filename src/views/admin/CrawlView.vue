@@ -117,7 +117,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(product, index) in statusLog[0]" :key="index">
+                            <tr v-for="(product, index) in statusLog" :key="index">
                                 <!-- Tên sản phẩm -->
                                 <td>
                                     <div v-if="!product.isEditing">
@@ -125,7 +125,6 @@
                                     </div>
                                     <input v-if="product.isEditing" v-model="product.product_name" class="form-control  text-black border-0" />
                                 </td>
-
                                 <!-- Link sản phẩm với chế độ xem và chỉnh sửa -->
                                 <td class="text-truncate" style="max-width: 200px;">
                                     <div v-if="!product.isEditing">
@@ -135,10 +134,8 @@
                                         <input v-model="product.product_link" class="form-control" />
                                     </div>
                                 </td>
-
                                 <!-- Giá sản phẩm -->
                                 <td>{{ product.product_price }}</td>
-
                                 <!-- Hình ảnh sản phẩm -->
                                 <td>
                                     <div v-if="!product.isEditing">
@@ -148,10 +145,9 @@
                                         <input v-model="product.product_image" class="form-control" />
                                     </div>
                                 </td>
-
                                 <!-- Nút hành động chỉnh sửa và xóa -->
                                 <td>
-                                    <button class="btn btn-primary btn-sm" @click="product.isEditing = !product.isEditing">
+                                    <button class="btn btn-primary btn-sm me-3" @click="toggleEdit(index)">
                                         <i class="fas fa-edit" v-if="!product.isEditing"></i>
                                         <i class="fas fa-save" v-else></i>
                                     </button>
@@ -160,6 +156,7 @@
                                     </button>
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -204,21 +201,25 @@ export default {
                     this.statusLog.push('Vui lòng điền đầy đủ thông tin cho tất cả các mục.');
                     return;
                 }
-                this.crawlStatus = 'loading'
-                const requests = this.formData.map(data => {
-                    return this.axios.post('http://localhost:5000/crawl', data)
-                        .then(response => response.data)
-                        .catch(error => ({
-                            error: error.message
-                        }));
-                });
+                this.crawlStatus = 'loading';
 
-                const results = await Promise.all(requests);
-                this.statusLog = results;
+                // Loop through each form entry
+                for (const data of this.formData) {
+                    try {
+                        const response = await this.axios.post('http://localhost:5000/crawl', data);
+                        // Assuming response.data contains the product info as an array
+                        this.statusLog.push(...response.data); // Use spread operator to add products to statusLog
+                    } catch (error) {
+                        this.statusLog.push({
+                            error: error.message
+                        });
+                    }
+                }
+
                 this.crawlStatus = 'success';
                 console.log('Status Log:', this.statusLog);
             } catch (error) {
-                this.crawlStatus = 'error'
+                this.crawlStatus = 'error';
                 console.error('Error:', error);
                 this.statusLog = [{
                     error: error.message
@@ -246,15 +247,15 @@ export default {
                 // Log dữ liệu hiện tại trong statusLog
                 console.log('Current statusLog:', this.statusLog);
 
-                // Giả sử statusLog[0] là mảng chứa sản phẩm
-                const products = this.statusLog[0] || [];
+                // Giả sử statusLog là một mảng chứa sản phẩm
+                const products = this.statusLog; // Xem lại cách truy cập
 
                 // Chuẩn bị dữ liệu để gửi
                 const productsToSave = products.map(product => ({
-                    product_name: product.product_name || '', // Lấy đúng tên thuộc tính
-                    product_price: product.product_price || '', // Lấy đúng tên thuộc tính
-                    product_link: product.product_link || '', // Lấy đúng tên thuộc tính
-                    product_image: product.product_image || '' // Lấy đúng tên thuộc tính
+                    product_name: product.product_name || '',
+                    product_price: product.product_price || '',
+                    product_link: product.product_link || '',
+                    product_image: product.product_image || ''
                 })).filter(product => product.product_name); // Lọc bỏ sản phẩm không có tên
 
                 // Gửi dữ liệu đến API

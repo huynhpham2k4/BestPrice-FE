@@ -30,14 +30,12 @@
                     <div class="catalog-menu">
                         <!-- Bán hàng cùng BestPrice -->
                         <a href="https://link-to-google-form.com" class="partner d-flex align-items-center gap-2 text-decoration-none">
-                            Bán hàng cùng
-                            <span class="highlight-text">BestPrice</span>
+                            Bán hàng cùng BestPrice
                         </a>
 
                         <!-- Nút Đăng nhập -->
                         <a class="btn-login d-flex align-items-center" href="/admin">
-                            Đăng nhập
-                            <i class="fa-solid fa-user ms-2"></i>
+                            <span>Đăng nhập</span>
                         </a>
                     </div>
                 </div>
@@ -52,8 +50,8 @@
 
                     <!-- Nút Đăng nhập -->
                     <a class="btn-login d-flex align-items-center" href="/admin">
-                        Đăng nhập
-                        <i class="fa-solid fa-user ms-2"></i>
+                        <i class="fa-solid fa-user ms-2 me-2"></i>
+                        <span>Đăng nhập</span>
                     </a>
                 </div>
             </div>
@@ -61,31 +59,32 @@
     </nav>
 
     <!-- Menu catalog nằm ngang dưới header -->
-    <div class="container-fluid justify-content-center">
-        <div class="d-flex align-items-center justify-content-start overflow-auto p-3" style="white-space: nowrap;">
+    <div class="container-fluid justify-content-center" style="background-color:#304c74;">
+        <div class="d-flex align-items-center justify-content-start overflow-auto p-2" style="white-space: nowrap; font-size: 1rem; font-family: 'Lato', sans-serif;">
             <a href="/phone" class="category-item text-center mx-4">
-                <i class="fa-solid fa-mobile-screen-button d-block"></i>
-                Điện thoại
+                <i class="fa-solid fa-mobile-screen-button d-block" style="font-size: 1.5rem;"></i> <!-- Kích thước icon theo rem -->
+                <span style="font-size: 1rem; font-weight: 200;">Điện thoại</span> <!-- Font chữ lớn hơn và mềm mỏng -->
             </a>
             <a href="/tablet" class="category-item text-center mx-4">
-                <i class="fa-solid fa-tablet-screen-button d-block"></i>
-                Máy tính bảng
+                <i class="fa-solid fa-tablet-screen-button d-block" style="font-size: 1.5rem;"></i>
+                <span style="font-size: 1rem; font-weight: 200;">Máy tính bảng</span>
             </a>
             <a href="/laptop" class="category-item text-center mx-2">
-                <i class="fa-solid fa-laptop d-block"></i>
-                Laptop
+                <i class="fa-solid fa-laptop d-block" style="font-size: 1.5rem;"></i>
+                <span style="font-size: 1rem; font-weight: 300;">Laptop</span>
             </a>
             <a href="/accessory" class="category-item text-center mx-4">
-                <i class="fa-solid fa-headphones d-block"></i>
-                Phụ kiện
+                <i class="fa-solid fa-headphones d-block" style="font-size: 1.5rem;"></i>
+                <span style="font-size: 1rem; font-weight: 300;">Phụ kiện</span>
             </a>
             <a href="/medical" class="category-item text-center mx-4">
-                <i class="fa-solid fa-kit-medical d-block"></i>
-                Thiết bị y tế-sức khoẻ
+                <i class="fa-solid fa-kit-medical d-block" style="font-size: 1.5rem;"></i>
+                <span style="font-size: 1rem; font-weight: 300;">Thiết bị y tế-sức khoẻ</span>
             </a>
             <!-- Thêm các mục khác tương tự -->
         </div>
     </div>
+
 </div>
 </template>
 
@@ -125,21 +124,28 @@ export default {
     text-decoration: none;
     /* Bỏ gạch chân mặc định của liên kết */
 }
+
 /* CSS */
 .form-container {
     display: flex;
 }
 
 .custom-search-input {
-    border-radius: 0; /* Loại bỏ bo góc ở phần giao */
-    border-top-left-radius: .25rem; /* Bo góc trên bên trái */
-    border-bottom-left-radius: .25rem; /* Bo góc dưới bên trái */
+    border-radius: 0;
+    /* Loại bỏ bo góc ở phần giao */
+    border-top-left-radius: .25rem;
+    /* Bo góc trên bên trái */
+    border-bottom-left-radius: .25rem;
+    /* Bo góc dưới bên trái */
 }
 
 .custom-search-button {
-    border-radius: 0; /* Loại bỏ bo góc ở phần giao */
-    border-top-right-radius: .25rem; /* Bo góc trên bên phải */
-    border-bottom-right-radius: .25rem; /* Bo góc dưới bên phải */
+    border-radius: 0;
+    /* Loại bỏ bo góc ở phần giao */
+    border-top-right-radius: .25rem;
+    /* Bo góc trên bên phải */
+    border-bottom-right-radius: .25rem;
+    /* Bo góc dưới bên phải */
 }
 
 /* Để tạo gạch chân màu dưới chữ */
@@ -152,11 +158,20 @@ export default {
     width: 100%;
     height: 5px;
     /* Độ dày của gạch chân */
-    background-color: #FFD43B;
+    background-color: #fc6404;
     /* Màu của gạch chân */
     border-radius: 2px;
     /* Bo góc gạch chân nếu cần */
     bottom: 5px;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+span {
+    font-size: 16px;
 }
 
 /* Để làm cho biểu tượng lớn hơn */
@@ -184,17 +199,47 @@ export default {
 /* Màu nền cho navbar */
 .bg-color {
     height: auto;
-    background-color: #2596be;
+    background-color: #102c4c;
 }
 
 /* Nút tìm kiếm */
 .btn-search {
-    background-color: #906404;
+    background-color: #ffffff;
+    /* Nền trắng */
     flex: 0 0 10%;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    /* Loại bỏ padding */
+    margin: 0;
+    border: none;
+    /* Loại bỏ viền */
+    outline: none;
+    /* Loại bỏ outline khi focus */
+    box-shadow: none;
+    /* Loại bỏ bóng */
+    cursor: pointer;
+    /* Giữ con trỏ chỉ vào nút */
+}
+
+.btn-search:hover,
+.btn-search:focus {
+    background-color: #ffffff;
+    /* Giữ nguyên nền trắng khi hover */
+    border: none;
+    /* Không viền khi hover */
+    box-shadow: none;
+    /* Không bóng khi hover */
+    outline: none;
+    /* Không outline khi focus */
+}
+
+/* Nút tìm kiếm */
+.btn-search .fa-magnifying-glass {
+    color: #fc6404
+        /* Thay đổi thành màu bạn muốn, ở đây là màu đỏ */
 }
 
 .category-item {
@@ -231,27 +276,26 @@ export default {
 
 /* Điều chỉnh menu catalog */
 .catalog-menu {
-    background-color: #fff;
+    background-color: #282626;
     border-top: 1px solid #ddd;
     padding: 10px 0;
 }
 
 .catalog-menu .nav-link {
-    color: #333;
+    color: #ffffff;
     padding: 5px 10px;
     font-size: 1.1rem;
 }
 
 .catalog-menu .nav-link:hover {
-    background-color: #f8f9fa;
+    background-color: #242526;
     border-radius: 5px;
 }
 
 /* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 767px) {
     .catalog-menu {
-        background-color: #fff;
-        padding: 10px;
+        background-color: #102c4c;
     }
 
     .partner,
@@ -274,6 +318,11 @@ export default {
         margin-top: 10px;
         width: 100%;
         text-align: center;
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: 800;
     }
 }
 

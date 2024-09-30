@@ -18,8 +18,8 @@
   <style scoped>
   .catalog-menu {
     position: absolute; /* Đặt vị trí tùy theo cần */
-    background-color: white; /* Màu nền của menu */
-    border: 1px solid #ddd; /* Đường viền của menu */
+    background-color: rgb(57, 53, 53); /* Màu nền của menu */
+    border: 1px solid #433f3f; /* Đường viền của menu */
     padding: 10px;
     display: none; /* Ẩn menu mặc định */
   }
