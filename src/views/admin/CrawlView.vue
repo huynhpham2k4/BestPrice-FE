@@ -5,7 +5,7 @@
         <div class="col-md-12">
             <div class="card" style="height: 600px; overflow: hidden;">
                 <div class="card-header text-white d-flex justify-content-center align-items-center">
-                    <h3 class="mb-0">Crawl dữ liệu</h3>
+                    <h4 class="mb-0">Crawl dữ liệu</h4>
                 </div>
                 <div class="card-body" style="overflow-y: auto;">
                     <form @submit.prevent="submitCrawlForm">
@@ -15,17 +15,17 @@
                                 <div class="d-flex align-items-center">
 
                                     <!-- Accordion Header -->
-                                    <h2 class="accordion-header flex-grow-1" :id="'heading' + index">
-                                        <button class="accordion-button" type="button" :data-bs-toggle="'collapse'" :data-bs-target="'#collapse' + index" :aria-expanded='true' :aria-controls="'collapse' + index">
+                                    <h3 class="accordion-header flex-grow-1" :id="'heading' + index">
+                                        <button class="accordion-button" type="button" :data-bs-toggle="'collapse'" :data-bs-target="'#collapse' + index" :aria-expanded='false' :aria-controls="'collapse' + index">
                                             {{ data.site_name || 'Nhập thông tin cần lấy dữ liệu' }}
                                         </button>
-                                    </h2>
+                                    </h3>
                                     <!-- Remove Button -->
                                     <button type="button" class="btn btn-danger m-2" @click="removeForm(index)">
                                         Remove
                                     </button>
                                 </div>
-                                <div :id="'collapse' + index" class="accordion-collapse collapse show" :aria-labelledby="'heading' + index">
+                                <div :id="'collapse' + index" class="accordion-collapse collapse " :aria-labelledby="'heading' + index">
                                     <div class="accordion-body">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -103,7 +103,7 @@
         <div class="col-md-12">
             <div class="card" style="height: 600px; display: flex; flex-direction: column;">
                 <div class="card-header  text-white d-flex justify-content-center align-items-center">
-                    <h3 class="mb-0">Thông tin sản phẩm lấy dữ liệu được</h3>
+                    <h4 class="mb-0">Thông tin sản phẩm lấy dữ liệu được</h4>
                 </div>
                 <div class="card-body" style="flex: 1; overflow-y: auto;">
                     <table class="table table-striped">
@@ -192,7 +192,30 @@ export default {
             crawlStatus: ''
         };
     },
+    mounted() {
+        this.loadInitialData();
+    },
     methods: {
+        async loadInitialData() {
+            try {
+                const response = await this.axios.get('https://localhost:7108/api/CrawlData');
+                const sites = response.data;
+
+                this.formData = sites.map(site => ({
+                    site_name: site.siteName || '',
+                    url: site.url || '',
+                    category_id: site.categoryId || null,
+                    selectors: {
+                        name_selector: site.nameSelector || '',
+                        price_selector: site.priceSelector || '',
+                        link_selector: site.linkSelector || '',
+                        image_selector: site.imageSelector || ''
+                    }
+                }));
+            } catch (error) {
+                console.error('Error fetching initial site data:', error);
+            }
+        },
         async submitCrawlForm() {
             try {
                 this.statusLog = []; // Clear previous logs
@@ -207,15 +230,18 @@ export default {
                 for (const data of this.formData) {
                     try {
                         const response = await this.axios.post('http://localhost:5000/crawl', data);
-                        // Assuming response.data contains the product info as an array
-                        this.statusLog.push(...response.data); // Use spread operator to add products to statusLog
+                        // Thêm thuộc tính isEditing cho từng sản phẩm
+                        const products = response.data.map(product => ({
+                            ...product,
+                            isEditing: false // Thêm thuộc tính để kiểm soát chế độ chỉnh sửa
+                        }));
+                        this.statusLog.push(...products); // Thêm các sản phẩm vào statusLog
                     } catch (error) {
                         this.statusLog.push({
                             error: error.message
                         });
                     }
                 }
-
                 this.crawlStatus = 'success';
                 console.log('Status Log:', this.statusLog);
             } catch (error) {
@@ -258,17 +284,24 @@ export default {
                     product_image: product.product_image || ''
                 })).filter(product => product.product_name); // Lọc bỏ sản phẩm không có tên
 
-                // Gửi dữ liệu đến API
-                const response = await this.axios.post('http://localhost:5000/add_products', {
-                    products: productsToSave,
-                    category_id: this.formData[0].category_id,
-                    site_name: this.formData[0].site_name
-                });
+                if (productsToSave.length === 0) {
+                    console.log('Không có sản phẩm hợp lệ để lưu.');
+                    return;
+                }
 
-                if (response.data.status === 'success') {
-                    this.statusLog.push('Dữ liệu đã được lưu thành công!');
-                } else {
-                    this.statusLog.push('Lưu dữ liệu thất bại. Phản hồi: ' + JSON.stringify(response.data));
+                // Lặp qua từng form để gửi dữ liệu sản phẩm tương ứng
+                for (const formData of this.formData) {
+                    const response = await this.axios.post('http://localhost:5000/add_products', {
+                        products: productsToSave,
+                        category_id: formData.category_id,
+                        site_name: formData.site_name
+                    });
+
+                    if (response.data.status === 'success') {
+                        this.statusLog.push(`Dữ liệu cho trang ${formData.site_name} đã được lưu thành công!`);
+                    } else {
+                        this.statusLog.push(`Lưu dữ liệu cho trang ${formData.site_name} thất bại. Phản hồi: ` + JSON.stringify(response.data));
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -276,11 +309,22 @@ export default {
             }
         },
         toggleEdit(index) {
-            this.statusLog[0][index].isEditing = !this.statusLog[0][index].isEditing;
+            // Truy cập trực tiếp vào product ở index
+            if (this.statusLog[index]) {
+                this.statusLog[index].isEditing = !this.statusLog[index].isEditing;
+            } else {
+                console.error(`Sản phẩm tại index ${index} không tồn tại.`);
+            }
         },
+
         deleteProduct(index) {
-            this.statusLog[0].splice(index, 1); // Xóa sản phẩm khỏi danh sách
-        },
+            // Truy cập trực tiếp vào statusLog và xóa sản phẩm tại index
+            if (this.statusLog[index]) {
+                this.statusLog.splice(index, 1);
+            } else {
+                console.error(`Không thể xóa sản phẩm tại index ${index} vì không tồn tại.`);
+            }
+        }
 
     }
 };
@@ -314,5 +358,10 @@ export default {
     border-radius: 5px;
     overflow: auto;
     /* Enable scrolling */
+}
+
+label {
+    font-size: 0.9rem;
+    /* Nhỏ hơn kích thước mặc định (16px * 0.9 = 14.4px) */
 }
 </style>
